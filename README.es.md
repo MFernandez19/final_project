@@ -1,6 +1,20 @@
-# Plantilla de Proyecto de Ciencia de Datos
+# Proyecto Final Flight Status
 
-Esta plantilla está diseñada para impulsar proyectos de ciencia de datos proporcionando una configuración básica para conexiones de base de datos, procesamiento de datos, y desarrollo de modelos de aprendizaje automático. Incluye una organización estructurada de carpetas para tus conjuntos de datos y un conjunto de paquetes de Python predefinidos necesarios para la mayoría de las tareas de ciencia de datos.
+El objetivo de este proyecto es desarrollar un sistema predictivo que permita identificar retrasos en vuelos comerciales basándonos en datos históricos. Usando el dataset proporcionado por Kaggle, que abarca información de vuelos desde 2018 hasta 2022, aquí vamos a analizar factores como aerolínea, aeropuerto, condiciones operativas y horarios para predecir si un vuelo tendrá un retraso significativo.
+
+## Proposito
+
+Los retrasos de vuelo son un problema recurrente en la industria aerea que afecta aerolíneas y pasajeros.
+Este proyecto busca:
+
+- Ayudar a aerolineas/aeropuertos a identificar patrones operativos que conducen a retrasos.
+- Proporcionar herramientas predictivas para optimizar planificacion de vuelos.
+- Mejorar la experiencia de los pasajeros para identificar posibles retrasos.
+
+## Datos
+
+El dataset usado en este proyecto proviene de kaggle (Flight Delay Dataset 2018-2022) que contiene información detallada sobre vuelos, aerolíneas, aeropuertos y factores asociados a retrasos.
+Link: https://www.kaggle.com/datasets/robikscube/flight-delay-dataset-20182022/data
 
 ## Estructura
 
@@ -14,7 +28,16 @@ El proyecto está organizado de la siguiente manera:
 - `data/` - Este directorio contiene los siguientes subdirectorios:
   - `interim/` - Para datos intermedios que han sido transformados.
   - `processed/` - Para los datos finales a utilizar para el modelado.
-  - `raw/` - Para datos brutos sin ningún procesamiento.
+  - `raw/` - Aqui deben ir los archivos originales en formato .parquet.
+
+## Nota sobre los datos 
+
+Debido al considerable tamaño de el dataset, los archivos originales estan en formato .parquet y NO ESTAN INCLUIDOS EN EL REPOSITORIO. Esto se gestiona mediante el archivo .gitignore, donde exluimos los archivos .parquet de la carpeta data/raw/.
+
+## Instrucciones para usar los datos
+1. Descarga los archivos .parquet desde Kaggle: https://www.kaggle.com/datasets/robikscube/flight-delay-dataset-20182022/data
+2. Coloca los archivos descargados en la carpeta data/raw
+3. Asegúrate de que los nombres de los archivos coincidan con los utilizados en el código.
 
 ## Configuración
 
