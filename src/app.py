@@ -1,6 +1,3 @@
-from utils import db_connect
-engine = db_connect()
-
 #Cargar modelo
 Model_path= "/workspace/final_project/models/flight_delay_model.pkl" 
 with open("/workspace/final_project/models/flight_delay_model.pkl", "rb") as file:
