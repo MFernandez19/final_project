@@ -3,12 +3,11 @@ import pandas as pd
 import numpy as np 
 import seaborn as sns 
 import matplotlib.pyplot as plt
-import pickle
 
 # Functional imports
 import json
 import pyarrow
-from pickle import dump
+import dump
 import gc
 import streamlit as st
 import datetime
