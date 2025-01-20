@@ -1,3 +1,6 @@
+import streamlit as st
+from pickle import load
+
 #Cargar modelo
 Model_path= "../models/flight_delay_model.pkl" 
 with open("../models/flight_delay_model.pkl", "rb") as file:
