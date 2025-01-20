@@ -8,6 +8,8 @@ import dump
 import gc
 import streamlit as st
 import datetime
+from pickle import load
+
 
 #Cargar modelo
 
