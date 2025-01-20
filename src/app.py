@@ -18,8 +18,8 @@ import datetime
 with open("../models/flight_delay_model.pkl", "rb") as f:
     model = load(f)
 
-Aerolineas = ['Airline'] 
-Aeropuertos = ['OriginCityName']  
+Aerolineas = df_cat["Airline"] 
+Aeropuertos = df_cat["OriginCityName"]  
 
 #Convertir hora en bloques de 15 minutos
 def convert_military_to_quarter_hour(dep_time):
