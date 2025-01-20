@@ -1,6 +1,6 @@
 #Cargar modelo
-Model_path= "/workspace/final_project/models/flight_delay_model.pkl" 
-with open("/workspace/final_project/models/flight_delay_model.pkl", "rb") as file:
+Model_path= "../models/flight_delay_model.pkl" 
+with open("../models/flight_delay_model.pkl", "rb") as file:
     model = pickle.load(file)
 
 
