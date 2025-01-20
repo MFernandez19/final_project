@@ -53,7 +53,7 @@ if st.button("Predecir Retraso"):
     
     delay_time = format_delay_time(max(0, prediction))  #No neg vals.
     
-    #Resultadop
+    #Resultado
     if prediction > 15:
         st.error(f"⚠️ Retraso estimado: {delay_time}")
     else:
