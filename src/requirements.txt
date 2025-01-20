@@ -16,4 +16,4 @@ xgboost
 pyarrow
 streamlit
 gunicorn
-pickle
+dump
