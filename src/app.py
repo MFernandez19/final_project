@@ -1,12 +1,9 @@
 # Basic imports
 import pandas as pd
 import numpy as np 
-import seaborn as sns 
-import matplotlib.pyplot as plt
 
 # Functional imports
-import json
-import pyarrow
+
 import dump
 import gc
 import streamlit as st
