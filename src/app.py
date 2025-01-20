@@ -21,7 +21,7 @@ st.write("Ingrese los detalles del vuelo para obtener una predicción de retraso
 airline = st.selectbox("Selecciona la aerolínea", Aerolineas)
 origin = st.selectbox("Aeropuerto de origen", Aeropuertos)
 dest = st.selectbox("Aeropuerto de destino", Aeropuertos)
-dep_time = st.slider("Hora de salida (formato 24h)", 0, 23.75, 12.0, step=0.25)  #Ajustado para permitir cuartos de hora
+dep_time = st.slider("Hora de salida (formato 24h)", min_value = 0, max_value = 23.75, value = 12.0, step=0.25)  #Ajustado para permitir cuartos de hora
 day = st.date_input("Fecha del vuelo", datetime.date.today())
 
 #Calcular HourBlock
