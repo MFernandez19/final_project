@@ -42,9 +42,9 @@ if st.button("Predecir Retraso"):
         'Month': [day.month],
         'DayofMonth': [day.day],
         'HourBlock': [dep_time],  
-        'Airline': [Aerolineas.index(airline)],
-        'Origin': [Aeropuertos.index(origin)],
-        'Dest': [Aeropuertos.index(dest)],
+        'Airline': [Airline],
+        'Origin': [OriginCityName],
+        'Dest': [OriginCityName.index(dest)],
     })
     
     #hacer prediccion
