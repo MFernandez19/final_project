@@ -16,6 +16,9 @@ from pickle import load
 with open("../models/flight_delay_model.pkl", "rb") as f:
     model = load(f)
 
+df_valores_unicos_cat = pd.read_csv("../data/raw/df_valores_unicos.csv")
+df_valores_unicos_origin = pd.read_csv("../data/raw/df_valores_unicos_origin.csv")
+
 
 #Convertir hora en bloques de 15 minutos
 def convert_military_to_quarter_hour(dep_time):
@@ -26,9 +29,9 @@ st.title("Modelo de predicción de Retrasos en Vuelos ✈️")
 st.write("Ingrese los detalles del vuelo para obtener una predicción de retraso.")
 
 #Inputs del usuario
-airline = st.selectbox("Selecciona la aerolínea", ["Airline"])
-origin = st.selectbox("Aeropuerto de origen", ["OriginCityName"] )
-dest = st.selectbox("Aeropuerto de destino", ["OriginCityName"] )
+airline = st.selectbox("Selecciona la aerolínea", df_valores_unicos_cat["Airline"])
+origin = st.selectbox("Aeropuerto de origen", df_valores_unicos_origin["OriginCityName"] )
+dest = st.selectbox("Aeropuerto de destino", df_valores_unicos_origin["OriginCityName"] )
 dep_time = st.slider("Hora de salida (formato 24h)", min_value = 0.0, max_value = 23.75, value = 12.0, step=0.25)  #Ajustado para permitir cuartos de hora
 day = st.date_input("Fecha del vuelo", datetime.date.today())
 
