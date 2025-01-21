@@ -45,9 +45,9 @@ if st.button("Predecir Retraso"):
         'Month': [day.month],
         'DayofMonth': [day.day],
         'HourBlock': [dep_time],  
-        'Airline': [Airline],
-        'Origin': [OriginCityName],
-        'Dest': [OriginCityName.index(dest)],
+        'Airline': df_valores_unicos_cat[Airline],
+        'Origin': df_valores_unicos_origin[OriginCityName],
+        'Dest': df_valores_unicos_origin[OriginCityName],
     })
     
     #hacer prediccion
