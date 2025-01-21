@@ -40,7 +40,7 @@ hour_block = convert_military_to_quarter_hour(dep_time)
 
 #Boton para predecir
 if st.button("Predecir Retraso"):
-    input_data = [[DayOfWeek, Month, DayofMonth, HourBlock, Airline, Origin, Dest]]
+    input_data = [[airline, origin, dest, dep_time, day]]
     
     #hacer prediccion
     prediction = model.predict(input_data)[0]
