@@ -18,6 +18,7 @@ with open("../models/flight_delay_model.pkl", "rb") as f:
 
 df_valores_unicos_cat = pd.read_csv("../data/raw/df_valores_unicos.csv")
 df_valores_unicos_origin = pd.read_csv("../data/raw/df_valores_unicos_origin.csv")
+df_nuevo_prueba = pd.read_csv("../data/raw/X_test_with_outliers_predict")
 
 #Convertir hora en bloques de 15 minutos
 def convert_military_to_quarter_hour(dep_time):
@@ -39,7 +40,7 @@ hour_block = convert_military_to_quarter_hour(DepTime)
 
 #Boton para predecir
 if st.button("Predecir Retraso"):
-    input_data = [["Airline", "OriginCityName", "DayOfWeek", "DepTime"]]
+    input_data = df_nuevo_prueba
 
     #hacer prediccion
     prediction = model.predict(input_data)[0]
