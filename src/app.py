@@ -19,6 +19,8 @@ with open("../models/flight_delay_model.pkl", "rb") as f:
 df_valores_unicos_cat = pd.read_csv("../data/raw/df_valores_unicos.csv")
 df_valores_unicos_origin = pd.read_csv("../data/raw/df_valores_unicos_origin.csv")
 
+df_input_data = pd.read_csv("../data/processed/X_test_with_outliers.csv")
+
 
 #Convertir hora en bloques de 15 minutos
 def convert_military_to_quarter_hour(dep_time):
@@ -29,18 +31,18 @@ st.title("Modelo de predicción de Retrasos en Vuelos ✈️")
 st.write("Ingrese los detalles del vuelo para obtener una predicción de retraso.")
 
 #Inputs del usuario
-airline = st.selectbox("Selecciona la aerolínea", df_valores_unicos_cat["Airline"])
-origin = st.selectbox("Aeropuerto de origen", df_valores_unicos_origin["OriginCityName"] )
-dest = st.selectbox("Aeropuerto de destino", df_valores_unicos_origin["OriginCityName"] )
-dep_time = st.slider("Hora de salida (formato 24h)", min_value = 0.0, max_value = 23.75, value = 12.0, step=0.25)  #Ajustado para permitir cuartos de hora
-day = st.date_input("Fecha del vuelo", datetime.date.today())
+Airline = st.selectbox("Selecciona la aerolínea", df_valores_unicos_cat["Airline"])
+OriginCityName = st.selectbox("Aeropuerto de origen", df_valores_unicos_origin["OriginCityName"] )
+OriginCityName = st.selectbox("Aeropuerto de destino", df_valores_unicos_origin["OriginCityName"] )
+DepTime = st.slider("Hora de salida (formato 24h)", min_value = 0.0, max_value = 23.75, value = 12.0, step=0.25)  #Ajustado para permitir cuartos de hora
+DayOfWeek = st.date_input("Fecha del vuelo", datetime.date.today())
 
 #Calcular HourBlock
 hour_block = convert_military_to_quarter_hour(dep_time)
 
 #Boton para predecir
 if st.button("Predecir Retraso"):
-    input_data = [[DayOfWeek, Month, Quarter, DayofMonth, DepTime, CRSDepTime, Distance, Airline, OriginStateName, DestStateName, OriginCityName, DestCityName, delay_category, strata, HourBlock]]
+    input_data = df_input_data["Airline", "OriginCityName", "DayOfWeek", "DepTime"]
 
     #hacer prediccion
     prediction = model.predict(input_data)[0]
