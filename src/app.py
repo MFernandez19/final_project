@@ -35,7 +35,7 @@ DepTime = st.slider("Hora de salida (formato 24h)", min_value = 0.0, max_value =
 DayOfWeek = st.date_input("Fecha del vuelo", datetime.date.today())
 
 #Calcular HourBlock
-hour_block = convert_military_to_quarter_hour(dep_time)
+hour_block = convert_military_to_quarter_hour(DepTime)
 
 #Boton para predecir
 if st.button("Predecir Retraso"):
