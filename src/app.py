@@ -18,7 +18,7 @@ with open("../models/flight_delay_model.pkl", "rb") as f:
 
 df_valores_unicos_cat = pd.read_csv("../data/raw/df_valores_unicos.csv")
 df_valores_unicos_origin = pd.read_csv("../data/raw/df_valores_unicos_origin.csv")
-df_nuevo_prueba = pd.read_csv("../data/raw/X_test_with_outliers_predict")
+df_nuevo_prueba = pd.read_csv("../data/raw/X_test_with_outliers_predict.csv")
 
 #Convertir hora en bloques de 15 minutos
 def convert_military_to_quarter_hour(dep_time):
