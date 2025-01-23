@@ -97,14 +97,17 @@ def load_encoders_and_scaler():
         "WeekType": LabelEncoder().fit(["Laboral", "Fin de semana"]),
     }
     scaler = StandardScaler().fit(pd.DataFrame({
-        "CRSDepTime": [0, 1200, 2359],
-        "CRSArrTime": [0, 1200, 2359],
-        "Distance": [100, 2500, 5000],
-        "Quarter": [1, 2, 3, 4],
-        "Month": [1, 6, 12],
-        "DayofMonth": [1, 15, 31],
-        "DayOfWeek": [0, 3, 6]
+        "CRSDepTime": [0, 2359],
+        "CRSArrTime": [0, 2359],
+        "Distance": [0, 5000],
+        "Quarter": [1, 4],
+        "Month": [1, 12],
+        "DayofMonth": [1, 31],
+        "DayOfWeek": [1, 7],
+        "WeekType": [0, 1],
+        "dia_festivo": [0, 1]
     }))
+
     return encoders, scaler
 
 encoders, scaler = load_encoders_and_scaler()
