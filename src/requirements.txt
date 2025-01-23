@@ -14,3 +14,7 @@ sqlalchemy>=1.4.37
 sympy>=1.10.1
 xgboost
 pyarrow
+imblearn
+lightgbm
+holidays
+pickle
