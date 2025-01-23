@@ -9,7 +9,7 @@ st.title("Predicción de retrasos en vuelos")
 # Cargar modelo entrenado
 @st.cache_resource
 def load_model():
-    with open("flight_delay_model.pkl", "rb") as file:
+    with open("../models/flight_delay_model.pkl", "rb") as file:
         model = pickle.load(file)
     return model
 
