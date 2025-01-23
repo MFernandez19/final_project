@@ -17,3 +17,5 @@ pyarrow
 imblearn
 lightgbm
 holidays
+streamlit
+gunicorn
