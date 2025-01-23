@@ -17,4 +17,3 @@ pyarrow
 imblearn
 lightgbm
 holidays
-pickle
