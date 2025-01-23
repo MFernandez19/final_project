@@ -40,48 +40,50 @@ def preprocess_data(input_data, encoders, scaler):
 
 # Entradas del usuario
 st.sidebar.header("Introducir características del vuelo")
-airline = st.sidebar.selectbox("Aerolínea", ["Airline"])
-origin = st.sidebar.text_input("Código de aeropuerto de origen", "Write airport origin code")
-dest = st.sidebar.text_input("Código de aeropuerto de destino", "Write airport destination code")
-origin_city = st.sidebar.text_input("Ciudad de origen", "Write airport origin's city")
-dest_city = st.sidebar.text_input("Ciudad de destino", "Write airport destination's city")
-origin_state = st.sidebar.selectbox("Estado de origen", ["OriginStateName"])
-dest_state = st.sidebar.selectbox("Estado de destino", ["DestStateName"])
-crs_dep_time = st.sidebar.slider("Scheduled departure time (military format)", 0, 2359, 900)
-crs_arr_time = st.sidebar.slider("Scheduled time of arrival (military format)", 0, 2359, 1130)
-distance = st.sidebar.number_input("Distance (in miles)", 100, 5000, 2500)
-quarter = st.sidebar.selectbox("Quarter", [1, 2, 3, 4])
-month = st.sidebar.slider("Month", 1, 12, 6)
-day_of_month = st.sidebar.slider("Day of the month", 1, 31, 15)
-day_of_week = st.sidebar.selectbox("Weekday", ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"])
+airline = st.sidebar.selectbox("Aerolínea", ["AirlineA", "AirlineB", "AirlineC", "AirlineD"])
+origin = st.sidebar.text_input("Código de aeropuerto de origen", "JFK")
+dest = st.sidebar.text_input("Código de aeropuerto de destino", "LAX")
+origin_city = st.sidebar.text_input("Ciudad de origen", "New York")
+dest_city = st.sidebar.text_input("Ciudad de destino", "Los Angeles")
+origin_state = st.sidebar.selectbox("Estado de origen", ["New York", "California", "Texas", "Florida"])
+dest_state = st.sidebar.selectbox("Estado de destino", ["New York", "California", "Texas", "Florida"])
+crs_dep_time = st.sidebar.slider("Hora de salida programada (formato militar)", 0, 2359, 900)
+crs_arr_time = st.sidebar.slider("Hora de llegada programada (formato militar)", 0, 2359, 1130)
+distance = st.sidebar.number_input("Distancia (en millas)", 100, 5000, 2500)
+quarter = st.sidebar.selectbox("Trimestre", [1, 2, 3, 4])
+month = st.sidebar.slider("Mes", 1, 12, 6)
+day_of_month = st.sidebar.slider("Día del mes", 1, 31, 15)
+day_of_week = st.sidebar.selectbox("Día de la semana", [0, 1, 2, 3, 4, 5, 6])  # Lunes = 0, Domingo = 6
 week_type = st.sidebar.selectbox("Tipo de semana", ["Laboral", "Fin de semana"])
 dia_festivo = st.sidebar.selectbox("¿Es día festivo?", ["Sí", "No"])
 
 # Crear un DataFrame con los datos del usuario
-input_data = pd.DataFrame({
-    "Airline": [airline],
-    "Origin": [origin],
-    "Dest": [dest],
-    "OriginCityName": [origin_city],
-    "DestCityName": [dest_city],
-    "OriginStateName": [origin_state],
-    "DestStateName": [dest_state],
-    "CRSDepTime": [crs_dep_time],
-    "CRSArrTime": [crs_arr_time],
-    "Distance": [distance],
-    "Quarter": [quarter],
-    "Month": [month],
-    "DayofMonth": [day_of_month],
-    "DayOfWeek": [day_of_week],
-    "WeekType": [week_type],
-    "dia_festivo": [1 if dia_festivo == "Sí" else 0]
-})
+try:
+    input_data = pd.DataFrame({
+        "Airline": [airline],
+        "Origin": [origin],
+        "Dest": [dest],
+        "OriginCityName": [origin_city],
+        "DestCityName": [dest_city],
+        "OriginStateName": [origin_state],
+        "DestStateName": [dest_state],
+        "CRSDepTime": [crs_dep_time],
+        "CRSArrTime": [crs_arr_time],
+        "Distance": [distance],
+        "Quarter": [quarter],
+        "Month": [month],
+        "DayofMonth": [day_of_month],
+        "DayOfWeek": [day_of_week],
+        "WeekType": [week_type],
+        "dia_festivo": [1 if dia_festivo == "Sí" else 0]
+    })
+except ValueError as e:
+    st.error(f"Error al crear el DataFrame: {e}")
 
 st.write("### Datos de entrada")
 st.dataframe(input_data)
 
 # Preprocesar los datos antes de la predicción
-# Aquí simulamos los codificadores y el escalador como ejemplos
 @st.cache_resource
 def load_encoders_and_scaler():
     encoders = {
