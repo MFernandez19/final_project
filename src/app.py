@@ -113,7 +113,7 @@ def load_encoders_and_scaler():
 encoders, scaler = load_encoders_and_scaler()
 
 # Preprocesar los datos
-processed_data = preprocess_data(input_data, encoders, scaler)
+processed_data = preprocess_data(input_data, _encoders, scaler)
 
 # Predicción
 if st.button("Predecir retraso"):
