@@ -118,20 +118,20 @@ st.dataframe(input_data)
 try:
     # Transforma las clases del usuario asegurando que los valores son escalares
     transformed_input = {
-        "Airline": airline_classes.get(user_input["Airline"], ""),
-        "Origin": origin_classes.get(user_input["Origin"], ""),
-        "Dest": dest_classes.get(user_input["Dest"], ""),
-        "OriginCityName": origin_city_classes.get(user_input["OriginCityName"], ""),
-        "DestCityName": dest_city_classes.get(user_input["DestCityName"], ""),
-        "OriginStateName": origin_state_classes.get(user_input["OriginStateName"], ""),
-        "DestStateName": dest_state_classes.get(user_input["DestStateName"], ""),
-        "CRSDepTime": user_input["CRSDepTime"] if isinstance(user_input["CRSDepTime"], (int, float)) else user_input["CRSDepTime"].iloc[0],
-        "CRSArrTime": user_input["CRSArrTime"] if isinstance(user_input["CRSArrTime"], (int, float)) else user_input["CRSArrTime"].iloc[0],
-        "Distance": user_input["Distance"] if isinstance(user_input["Distance"], (int, float)) else user_input["Distance"].iloc[0],
-        "Quarter": user_input["Quarter"] if isinstance(user_input["Quarter"], (int, float)) else user_input["Quarter"].iloc[0],
-        "Month": user_input["Month"] if isinstance(user_input["Month"], (int, float)) else user_input["Month"].iloc[0],
-        "DayofMonth": user_input["DayofMonth"] if isinstance(user_input["DayofMonth"], (int, float)) else user_input["DayofMonth"].iloc[0],
-        "DayOfWeek": user_input["DayOfWeek"] if isinstance(user_input["DayOfWeek"], (int, float)) else user_input["DayOfWeek"].iloc[0],
+        "Airline": airline_classes.get(input_data["Airline"], ""),
+        "Origin": origin_classes.get(input_data["Origin"], ""),
+        "Dest": dest_classes.get(input_data["Dest"], ""),
+        "OriginCityName": origin_city_classes.get(input_data["OriginCityName"], ""),
+        "DestCityName": dest_city_classes.get(input_data["DestCityName"], ""),
+        "OriginStateName": origin_state_classes.get(input_data["OriginStateName"], ""),
+        "DestStateName": dest_state_classes.get(input_data["DestStateName"], ""),
+        "CRSDepTime": input_data["CRSDepTime"] if isinstance(input_data["CRSDepTime"], (int, float)) else input_data["CRSDepTime"].iloc[0],
+        "CRSArrTime": input_data["CRSArrTime"] if isinstance(input_data["CRSArrTime"], (int, float)) else input_data["CRSArrTime"].iloc[0],
+        "Distance": input_data["Distance"] if isinstance(input_data["Distance"], (int, float)) else input_data["Distance"].iloc[0],
+        "Quarter": input_data["Quarter"] if isinstance(input_data["Quarter"], (int, float)) else input_data["Quarter"].iloc[0],
+        "Month": input_data["Month"] if isinstance(input_data["Month"], (int, float)) else input_data["Month"].iloc[0],
+        "DayofMonth": input_data["DayofMonth"] if isinstance(input_data["DayofMonth"], (int, float)) else input_data["DayofMonth"].iloc[0],
+        "DayOfWeek": input_data["DayOfWeek"] if isinstance(input_data["DayOfWeek"], (int, float)) else input_data["DayOfWeek"].iloc[0],
     }
 
     # Crea un DataFrame para la predicción
