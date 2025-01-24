@@ -87,8 +87,8 @@ airports = ["LAX", "JFK", "ORD", "IAH", "MIA"]
 days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
 airline = st.sidebar.selectbox("Aerolínea", content1)
-origin = st.sidebar.text_input("Código de aeropuerto de origen", content6)
-dest = st.sidebar.text_input("Código de aeropuerto de destino", content7)
+origin = st.sidebar.text_input("Código de aeropuerto de origen", "Escriba el código...")
+dest = st.sidebar.text_input("Código de aeropuerto de destino", "Escriba el código...")
 origin_city = st.sidebar.selectbox("Ciudad de origen", content4)
 dest_city = st.sidebar.selectbox("Ciudad de destino", content2)
 origin_state = st.sidebar.selectbox("Estado de origen", content5)
@@ -132,13 +132,13 @@ st.dataframe(input_data)
 @st.cache_resource
 def load_encoders_and_scaler():
     encoders = {
-        "Airline": LabelEncoder().fit(df_datos_airline),
-        "Origin": LabelEncoder().fit(df_datos_Origin),
-        "Dest": LabelEncoder().fit(df_datos_Dest),
-        "OriginCityName": LabelEncoder().fit(df_datos_OriginCityName),
-        "DestCityName": LabelEncoder().fit(df_datos_DestCityName),
-        "OriginStateName": LabelEncoder().fit(df_datos_OriginStateName),
-        "DestStateName": LabelEncoder().fit(df_datos_DestStateName),
+        "Airline": LabelEncoder().fit(content1),
+        "Origin": LabelEncoder().fit(content6),
+        "Dest": LabelEncoder().fit(content7),
+        "OriginCityName": LabelEncoder().fit(content4),
+        "DestCityName": LabelEncoder().fit(content2),
+        "OriginStateName": LabelEncoder().fit(content5),
+        "DestStateName": LabelEncoder().fit(content3),
         "WeekType": LabelEncoder().fit(["Laboral", "Fin de semana"]),
         "DayOfWeek": LabelEncoder().fit(days_of_week)
     }
