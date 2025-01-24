@@ -14,7 +14,7 @@ def load_model():
         model = pickle.load(file)
     return model
 
-df_datos = pd.read_csv("../data/processed/X_test_with_outliers_norm.csv")
+df_datos = pd.read_csv("/data/processed/X_test_with_outliers_norm.csv")
 
 model = load_model()
 
