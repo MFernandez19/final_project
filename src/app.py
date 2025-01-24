@@ -121,7 +121,7 @@ try:
     }
 
     # Crea un DataFrame para la predicción
-    df_transformed = pd.DataFrame([transformed_input])
+    df_transformed = pd.DataFrame(transformed_input)
     st.write("Datos transformados listos para predecir:")
     st.write(df_transformed)
 
