@@ -17,25 +17,25 @@ def load_model():
 
 model = load_model()
 
-with open('/data/interim/enc_Airline.json', 'r') as f:
+with open('data/interim/enc_Airline.json', 'r') as f:
     airline_classes = json.load(f)
 
-with open('/data/interim/enc_Dest.json', 'r') as f:
+with open('data/interim/enc_Dest.json', 'r') as f:
     dest_classes = json.load(f)
 
-with open('/data/interim/enc_DestCityName.json', 'r') as f:
+with open('data/interim/enc_DestCityName.json', 'r') as f:
     dest_city_classes = json.load(f)
 
-with open('/data/interim/enc_DestStateName.json', 'r') as f:
+with open('data/interim/enc_DestStateName.json', 'r') as f:
     dest_state_classes = json.load(f)
 
-with open('/data/interim/enc_Origin.json', 'r') as f:
+with open('data/interim/enc_Origin.json', 'r') as f:
     origin_classes = json.load(f)
     
-with open('/data/interim/enc_OriginCityName.json', 'r') as f:
+with open('data/interim/enc_OriginCityName.json', 'r') as f:
     origin_city_classes = json.load(f)
 
-with open('/data/interim/enc_OriginStateName.json', 'r') as f:
+with open('data/interim/enc_OriginStateName.json', 'r') as f:
     origin_state_classes = json.load(f)
 
 # Columnas utilizadas en el modelo
