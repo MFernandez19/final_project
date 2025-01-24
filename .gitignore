@@ -1,6 +1,5 @@
 __pycache__
 .env
 .learn
-data/interim
 data/processed
 data/raw/*.parquet
