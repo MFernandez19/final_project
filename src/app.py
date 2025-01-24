@@ -124,23 +124,19 @@ try:
 
     # Crea un DataFrame con los datos transformados
     df_transformed = pd.DataFrame([transformed_input])
-    st.write("Datos transformados listos para predecir:")
-    st.write(df_transformed)
 
 except Exception as e:
     st.error(f"Hubo un error al transformar los datos: {e}")
 
-# Usa df_transformed solo si está correctamente definido
-if df_transformed is not None:
-    try:
-        # Realiza la predicción si df_transformed es válido
-        prediction = model.predict(df_transformed)
-        if prediction[0] == 0:
-            st.success("Afortunadamente su vuelo no se ha retrasado.")
-        else:
-            st.error("Desafortunadamente su vuelo ha sido retrasado. Por favor, tome las precauciones necesarias.")
-    except Exception as e:
-        st.error(f"Hubo un error al realizar la predicción: {e}")
-else:
-    st.error("No se pudo realizar la predicción porque los datos no se transformaron correctamente.")
+try:
+    # Realiza la predicción si df_transformed es válido
+    prediction = model.predict(df_transformed)
+    
+    if prediction[0] == 0:
+        st.success("Afortunadamente su vuelo no se ha retrasado.")
+    else:
+        st.error("Desafortunadamente su vuelo ha sido retrasado. Por favor, tome las precauciones necesarias.")
+except Exception as e:
+    st.error(f"Hubo un error al realizar la predicción: {e}")
+
 
