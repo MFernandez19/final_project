@@ -80,7 +80,7 @@ def preprocess_data(input_data, _encoders, _scaler):  # Renombrar parámetros pa
 
 # Entradas del usuario
 st.sidebar.header("Introducir características del vuelo")
-airlines = df_datos_airline
+airlines = content1
 states = ["California", "Texas", "Florida", "New York", "Illinois"]
 cities = ["Los Angeles", "New York", "Chicago", "Houston", "Miami"]
 airports = ["LAX", "JFK", "ORD", "IAH", "MIA"]
