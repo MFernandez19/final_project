@@ -1,284 +1,144 @@
-# Predicción de Retrasos en Vuelos - Notebook Mejorado
-# ======================================================
-
-# 0. Imports
-# ----------
-
-# Basic imports
 import pandas as pd
-import numpy as np 
-import seaborn as sns 
-import matplotlib.pyplot as plt
-
-# Functional imports
+import streamlit as st
+import datetime
+import pickle
 import json
-import pyarrow
-from pickle import dump
-import gc
-from datetime import datetime
 
-# Preprocessing imports
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, MinMaxScaler
-from sklearn.impute import SimpleImputer
+# Ruta al archivo del DataFrame y al modelo
+FILE_PATH = "data/raw/Combined_Flights_2021.parquet"
+MODEL_PATH = "models/best_model_xgb_subsample_1.0_n_estimators_200_max_depth_10_learning_rate_0.2_gamma_0.1_colsample_bytree_0.8.pkl"
 
-# Model imports
-from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
-from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
-from xgboost import XGBRegressor
-from sklearn.ensemble import RandomForestRegressor
-from lightgbm import LGBMRegressor
-
-# Configuraciones
-pd.set_option('display.max_columns', None)
-np.random.seed(42)
-
-# 1. Carga de Datos
-# ----------------
-
-def load_data():
-    """Carga y realiza preprocesamiento inicial de los datos"""
-    print("Cargando datos...")
-    df = pd.read_parquet("../data/raw/Combined_Flights_2022.parquet", engine="pyarrow")
-    
-    # Seleccionar columnas relevantes
-    columns_to_keep = [
-        'DayOfWeek', 'Month', 'Quarter', 'DayofMonth',
-        'DepDelayMinutes', 'DepTime', 'CRSDepTime',
-        'Distance', 'Airline', 'OriginStateName',
-        'DestStateName', 'OriginCityName', 'DestCityName'
+# Cargar el DataFrame
+@st.cache_resource
+def load_and_prepare_data(file_path):
+    df = pd.read_parquet(file_path)
+    required_columns = [
+        "Airline", "Origin", "Dest", "OriginCityName", "DestCityName",
+        "OriginStateName", "DestStateName"
     ]
-    
-    df = df[columns_to_keep]
-    print(f"Dataset cargado con {df.shape[0]} filas y {df.shape[1]} columnas")
+    df = df[required_columns].drop_duplicates().dropna()
     return df
 
-# 2. Análisis Exploratorio de Datos (EDA)
-# -------------------------------------
+# Cargar los encoders
+@st.cache_resource
+def load_encoders():
+    encoders = {}
+    files = [
+        "enc_Airline", "enc_Origin", "enc_Dest", 
+        "enc_OriginCityName", "enc_DestCityName", 
+        "enc_OriginStateName", "enc_DestStateName"
+    ]
+    for file in files:
+        with open(f"data/interim/{file}.json", "r") as f:
+            encoders[file.split("_")[1]] = json.load(f)
+    return encoders
 
-def perform_eda(df):
-    """Realiza análisis exploratorio de datos"""
-    print("\nAnálisis Exploratorio de Datos:")
-    
-    # Estadísticas básicas
-    print("\nEstadísticas descriptivas de variables numéricas:")
-    print(df.describe())
-    
-    # Valores nulos
-    print("\nValores nulos por columna:")
-    null_counts = df.isnull().sum()
-    print(null_counts[null_counts > 0])
-    
-    # Análisis de la variable objetivo
-    plt.figure(figsize=(10, 6))
-    sns.histplot(data=df, x='DepDelayMinutes', bins=50)
-    plt.title('Distribución de Retrasos')
-    plt.show()
-    
-    # Correlaciones
-    plt.figure(figsize=(12, 8))
-    numerical_cols = df.select_dtypes(include=['float64', 'int64']).columns
-    sns.heatmap(df[numerical_cols].corr(), annot=True, cmap='coolwarm')
-    plt.title('Matriz de Correlaciones')
-    plt.show()
+# Cargar el modelo
+@st.cache_resource
+def load_model():
+    with open(MODEL_PATH, "rb") as file:
+        model = pickle.load(file)
+    return model
 
-# 3. Feature Engineering
-# --------------------
+# Crear mapeos dinámicos
+@st.cache_resource
+def create_mappings(data):
+    state_to_city_mapping = data.groupby("OriginStateName")["OriginCityName"].apply(lambda x: list(set(x))).to_dict()
+    city_to_airport_mapping = data.groupby("OriginCityName")["Origin"].apply(lambda x: list(set(x))).to_dict()
+    dest_state_to_city_mapping = data.groupby("DestStateName")["DestCityName"].apply(lambda x: list(set(x))).to_dict()
+    dest_city_to_airport_mapping = data.groupby("DestCityName")["Dest"].apply(lambda x: list(set(x))).to_dict()
+    return state_to_city_mapping, city_to_airport_mapping, dest_state_to_city_mapping, dest_city_to_airport_mapping
 
-def create_cyclical_features(df):
-    """Crea características cíclicas para variables temporales"""
-    print("\nCreando características cíclicas...")
-    
-    # Convertir DepTime a hora del día (0-24)
-    df['HourBlock'] = df['DepTime'].apply(lambda x: int(str(int(x)).zfill(4)[:2]) + 
-                                        int(str(int(x)).zfill(4)[2:])/60)
-    
-    # Features cíclicos
-    for col, max_val in zip(['HourBlock', 'DayOfWeek', 'Month'], 
-                          [24, 7, 12]):
-        df[f'{col}_sin'] = np.sin(2 * np.pi * df[col]/max_val)
-        df[f'{col}_cos'] = np.cos(2 * np.pi * df[col]/max_val)
-    
-    return df
+# Preparar los datos
+data = load_and_prepare_data(FILE_PATH)
+encoders = load_encoders()
+model = load_model()
+state_to_city_mapping, city_to_airport_mapping, dest_state_to_city_mapping, dest_city_to_airport_mapping = create_mappings(data)
 
-def create_interaction_features(df):
-    """Crea características de interacción"""
-    print("Creando características de interacción...")
-    
-    df['Distance_Hour'] = df['Distance'] * df['HourBlock']
-    df['Distance_DayOfWeek'] = df['Distance'] * df['DayOfWeek']
-    df['Hour_DayOfWeek'] = df['HourBlock'] * df['DayOfWeek']
-    
-    return df
+# Aplicación Streamlit
+st.title("Predicción de Retrasos en Vuelos")
 
-def handle_outliers(df, columns, n_std=3):
-    """Maneja outliers usando el método de z-score"""
-    print("\nManejando outliers...")
-    df_clean = df.copy()
-    
-    for col in columns:
-        mean = df[col].mean()
-        std = df[col].std()
-        df_clean[col] = df_clean[col].clip(lower=mean - n_std * std, 
-                                         upper=mean + n_std * std)
-    
-    return df_clean
+# Barra lateral para entrada del usuario
+st.sidebar.header("Introducir características del vuelo")
 
-# 4. Preprocesamiento
-# ------------------
+# Selección dinámica para el origen
+origin_state = st.sidebar.selectbox("Estado de origen", list(state_to_city_mapping.keys()))
+origin_city_options = state_to_city_mapping[origin_state]
+origin_city = st.sidebar.selectbox("Ciudad de origen", origin_city_options)
 
-def create_preprocessing_pipeline(numerical_features, categorical_features):
-    """Crea pipeline de preprocesamiento"""
-    numerical_transformer = Pipeline(steps=[
-        ('imputer', SimpleImputer(strategy='median')),
-        ('scaler', StandardScaler())
-    ])
-    
-    categorical_transformer = Pipeline(steps=[
-        ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
-        ('onehot', OneHotEncoder(drop='first', sparse=False))
-    ])
-    
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ('num', numerical_transformer, numerical_features),
-            ('cat', categorical_transformer, categorical_features)
-        ])
-    
-    return preprocessor
+origin_airport_options = city_to_airport_mapping[origin_city]
+origin_airport = st.sidebar.selectbox("Aeropuerto de origen", origin_airport_options)
 
-# 5. Modelado
-# ----------
+# Selección dinámica para el destino
+dest_state = st.sidebar.selectbox("Estado de destino", list(dest_state_to_city_mapping.keys()))
+dest_city_options = dest_state_to_city_mapping[dest_state]
+dest_city = st.sidebar.selectbox("Ciudad de destino", dest_city_options)
 
-def train_and_evaluate_models(X_train, X_test, y_train, y_test):
-    """Entrena y evalúa múltiples modelos"""
-    models = {
-        'XGBoost': XGBRegressor(random_state=42),
-        'RandomForest': RandomForestRegressor(random_state=42),
-        'LightGBM': LGBMRegressor(random_state=42)
-    }
-    
-    results = {}
-    
-    for name, model in models.items():
-        print(f"\nEntrenando {name}...")
-        model.fit(X_train, y_train)
-        
-        # Predicciones
-        y_pred = model.predict(X_test)
-        
-        # Métricas
-        results[name] = {
-            'MAE': mean_absolute_error(y_test, y_pred),
-            'RMSE': np.sqrt(mean_squared_error(y_test, y_pred)),
-            'R2': r2_score(y_test, y_pred)
-        }
-        
-        # Validación cruzada
-        cv_scores = cross_val_score(model, X_train, y_train, 
-                                  cv=5, scoring='neg_mean_squared_error')
-        results[name]['CV_RMSE'] = np.sqrt(-cv_scores.mean())
-    
-    return results, models
+dest_airport_options = dest_city_to_airport_mapping[dest_city]
+dest_airport = st.sidebar.selectbox("Aeropuerto de destino", dest_airport_options)
 
-def optimize_best_model(best_model_name, X_train, y_train):
-    """Optimiza hiperparámetros del mejor modelo"""
-    if best_model_name == 'XGBoost':
-        param_grid = {
-            'learning_rate': [0.01, 0.1],
-            'max_depth': [3, 5, 7],
-            'n_estimators': [100, 200],
-            'min_child_weight': [1, 3]
-        }
-        model = XGBRegressor(random_state=42)
-    elif best_model_name == 'RandomForest':
-        param_grid = {
-            'n_estimators': [100, 200],
-            'max_depth': [10, 20, None],
-            'min_samples_split': [2, 5]
-        }
-        model = RandomForestRegressor(random_state=42)
-    else:  # LightGBM
-        param_grid = {
-            'learning_rate': [0.01, 0.1],
-            'n_estimators': [100, 200],
-            'max_depth': [3, 5, 7]
-        }
-        model = LGBMRegressor(random_state=42)
-    
-    grid_search = GridSearchCV(model, param_grid, cv=5, 
-                             scoring='neg_mean_squared_error', n_jobs=-1)
-    grid_search.fit(X_train, y_train)
-    
-    return grid_search.best_estimator_, grid_search.best_params_
+# Otras entradas del usuario
+airline = st.sidebar.selectbox("Aerolínea", data["Airline"].unique())
+departure_time = st.sidebar.time_input("Hora de salida (24h)", value=datetime.time(9, 0))
+arrival_time = st.sidebar.time_input("Hora de llegada (24h)", value=datetime.time(16, 30))
+distance = st.sidebar.number_input("Distancia (en millas)", 100, 5000, 2500)
+flight_date = st.sidebar.date_input("Fecha del vuelo", min_value=datetime.date(2023, 1, 1))
 
-# 6. Función Principal
-# ------------------
+# Convertir la fecha y hora a los datos necesarios
+day_of_month = flight_date.day
+month = flight_date.month
+day_of_week = flight_date.weekday() + 1  # Lunes=1, Domingo=7
+quarter = (month - 1) // 3 + 1
 
-def main():
-    # 1. Cargar datos
-    df = load_data()
-    
-    # 2. EDA
-    perform_eda(df)
-    
-    # 3. Feature Engineering
-    df = create_cyclical_features(df)
-    df = create_interaction_features(df)
-    df = handle_outliers(df, ['Distance', 'DepDelayMinutes'])
-    
-    # 4. Preparación de datos
-    X = df.drop('DepDelayMinutes', axis=1)
-    y = df['DepDelayMinutes']
-    
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
-    
-    # Definir características
-    numerical_features = ['Distance', 'HourBlock', 'Distance_Hour', 
-                         'Distance_DayOfWeek', 'Hour_DayOfWeek', 
-                         'HourBlock_sin', 'HourBlock_cos',
-                         'DayOfWeek_sin', 'DayOfWeek_cos',
-                         'Month_sin', 'Month_cos']
-    
-    categorical_features = ['Airline', 'OriginStateName', 'DestStateName']
-    
-    # Crear y aplicar pipeline
-    preprocessor = create_preprocessing_pipeline(
-        numerical_features, categorical_features
-    )
-    
-    # Preprocesar datos
-    X_train_processed = preprocessor.fit_transform(X_train)
-    X_test_processed = preprocessor.transform(X_test)
-    
-    # 5. Modelado
-    results, models = train_and_evaluate_models(
-        X_train_processed, X_test_processed, y_train, y_test
-    )
-    
-    # Encontrar mejor modelo
-    best_model_name = min(results.items(), 
-                         key=lambda x: x[1]['RMSE'])[0]
-    
-    # Optimizar mejor modelo
-    best_model, best_params = optimize_best_model(
-        best_model_name, X_train_processed, y_train
-    )
-    
-    # Guardar modelo y resultados
-    print("\nGuardando modelo y resultados...")
-    dump(best_model, open('../models/best_model.pkl', 'wb'))
-    dump(preprocessor, open('../models/preprocessor.pkl', 'wb'))
-    
-    with open('../models/model_metrics.json', 'w') as f:
-        json.dump(results, f)
-    
-    return best_model, preprocessor, results
+# Convertir la hora a formato militar (HHMM)
+crs_dep_time = departure_time.hour * 100 + departure_time.minute
+crs_arr_time = arrival_time.hour * 100 + arrival_time.minute
 
-if __name__ == "__main__":
-    best_model, preprocessor, results = main()
-    print("\nResultados finales:")
-    print(json.dumps(results, indent=2))
+# Transformar las variables categóricas con los encoders
+try:
+    airline_encoded = encoders["Airline"].get(airline, -1)
+    origin_encoded = encoders["Origin"].get(origin_airport, -1)
+    dest_encoded = encoders["Dest"].get(dest_airport, -1)
+    origin_city_encoded = encoders["OriginCityName"].get(origin_city, -1)
+    dest_city_encoded = encoders["DestCityName"].get(dest_city, -1)
+    origin_state_encoded = encoders["OriginStateName"].get(origin_state, -1)
+    dest_state_encoded = encoders["DestStateName"].get(dest_state, -1)
+except KeyError as e:
+    st.error(f"Error al codificar las variables: {e}")
+
+# Crear un diccionario con las entradas codificadas
+input_data = {
+    "Airline": airline_encoded,
+    "Origin": origin_encoded,
+    "Dest": dest_encoded,
+    "OriginCityName": origin_city_encoded,
+    "DestCityName": dest_city_encoded,
+    "OriginStateName": origin_state_encoded,
+    "DestStateName": dest_state_encoded,
+    "CRSDepTime": crs_dep_time,
+    "CRSArrTime": crs_arr_time,
+    "Distance": distance,
+    "Quarter": quarter,
+    "Month": month,
+    "DayofMonth": day_of_month,  # Corregido a "DayofMonth"
+    "DayOfWeek": day_of_week,
+}
+
+# Mostrar los datos ingresados
+st.write("### Datos de entrada codificados")
+st.json(input_data)
+
+# Realizar la predicción
+if st.button("Predecir retraso"):
+    try:
+        # Crear DataFrame para el modelo
+        df_transformed = pd.DataFrame([input_data])
+
+        # Realizar la predicción
+        prediction = model.predict(df_transformed)
+        if prediction[0] == 0:
+            st.success("✅ Afortunadamente, su vuelo no se ha retrasado.")
+        else:
+            st.warning("⚠️ Desafortunadamente, su vuelo ha sido retrasado. Por favor, tome las medidas necesarias.")
+    except Exception as e:
+        st.error(f"Error al realizar la predicción: {e}")
