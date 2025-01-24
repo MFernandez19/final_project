@@ -101,8 +101,6 @@ st.dataframe(input_data)
 
 # Preprocesar los datos antes de la predicción
 
-df_transformed = None  # Define df_transformed inicialmente como None
-
 try:
     # Transforma las clases del usuario asegurando que los valores sean escalares
     transformed_input = {
