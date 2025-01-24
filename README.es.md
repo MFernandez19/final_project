@@ -1,88 +1,168 @@
-# Plantilla de Proyecto de Ciencia de Datos
+# Proyecto Final: Predicción de Retrasos en Vuelos
 
-Esta plantilla está diseñada para impulsar proyectos de ciencia de datos proporcionando una configuración básica para conexiones de base de datos, procesamiento de datos, y desarrollo de modelos de aprendizaje automático. Incluye una organización estructurada de carpetas para tus conjuntos de datos y un conjunto de paquetes de Python predefinidos necesarios para la mayoría de las tareas de ciencia de datos.
+## 🌍 Descripción del Proyecto
 
-## Estructura
+Este proyecto tiene como objetivo desarrollar un sistema predictivo que permita anticipar retrasos en vuelos comerciales utilizando datos históricos de vuelos en los Estados Unidos. La predicción de retrasos es un problema recurrente en la industria aérea que impacta significativamente a aerolíneas, aeropuertos y pasajeros.
 
-El proyecto está organizado de la siguiente manera:
+Para abordar este problema, utilizamos datos del Flight Delay Dataset 2018-2022, disponible en Kaggle. Sin embargo, debido a limitaciones computacionales, restringimos nuestro análisis y modelado exclusivamente a los vuelos del año 2021.
 
-- `app.py` - El script principal de Python que ejecutas para tu proyecto.
-- `explore.py` - Un notebook para que puedas hacer tus exploraciones, idealmente el codigo de este notebook se migra hacia app.py para subir a produccion.
-- `utils.py` - Este archivo contiene código de utilidad para operaciones como conexiones de base de datos.
-- `requirements.txt` - Este archivo contiene la lista de paquetes de Python necesarios.
-- `models/` - Este directorio debería contener tus clases de modelos SQLAlchemy.
-- `data/` - Este directorio contiene los siguientes subdirectorios:
-  - `interim/` - Para datos intermedios que han sido transformados.
-  - `processed/` - Para los datos finales a utilizar para el modelado.
-  - `raw/` - Para datos brutos sin ningún procesamiento.
+El modelo final está basado en XGBoost con optimización de hiperparámetros mediante RandomizedSearchCV, logrando una precisión del 84.52% en la clasificación binaria de vuelos retrasados.
 
-## Configuración
+## 🌟 Objetivos del Proyecto
 
-**Prerrequisitos**
+Este sistema predictivo busca:
 
-Asegúrate de tener Python 3.11+ instalado en tu máquina. También necesitarás pip para instalar los paquetes de Python.
+✅ Ayudar a aerolíneas y aeropuertos a identificar patrones operacionales que generan retrasos.
 
-**Instalación**
+✅ Optimizar la planificación de vuelos mediante la detección temprana de riesgos de demoras.
 
-Clona el repositorio del proyecto en tu máquina local.
+✅ Mejorar la experiencia del pasajero, permitiendo prever retrasos y tomar mejores decisiones de viaje.
 
-Navega hasta el directorio del proyecto e instala los paquetes de Python requeridos:
+## 📊 Fuente de Datos
 
-```bash
+Fuente: Kaggle (Flight Delay Dataset 2018-2022)
+
+Período Analizado: Solo 2021
+
+Formato: .parquet
+
+Variables Clave:
+
+Tiempo de Salida y Tiempo de Llegada
+
+Aerolínea
+
+Aeropuerto de Origen/Destino
+
+Retrasos Previos
+
+Condiciones Meteorológicas
+
+## 🔄 Preprocesamiento y Análisis Exploratorio (EDA)
+
+Durante el EDA se identificaron los siguientes puntos clave:
+
+🌐 Distribución de retrasos: La mayoría de los retrasos fueron menores a 30 minutos.
+
+📊 Factores determinantes: Los retrasos están influenciados por la aerolínea, aeropuerto y horario del vuelo.
+
+⚙️ Preprocesamiento:
+
+Transformación de datos categóricos.
+
+Normalización con StandardScaler y MinMaxScaler.
+
+Manejo de desequilibrio en los datos con SMOTE y RandomUnderSampler.
+
+Visualizaciones con calmap para analizar patrones temporales de retraso.
+
+## 🔧 Estructura del Proyecto
+
+FINAL_PROJECT/
+
+├── .devcontainer/
+
+├── .vscode/
+
+├── data/
+
+│   ├── interim/
+
+│   ├── processed/ (.gitkeep)
+
+│   └── raw/ (.gitkeep)
+
+├── models/ (.gitkeep)
+
+├── src/
+
+│   └── pruebas/
+
+│       ├── explore.ipynb
+
+│       ├── prueba.ipynb
+
+│       └── ultima_prueba.ipynb
+├── app.py
+
+├── best_model_xgb_subsample_1.0_n_esti...
+
+├── Combined_Flights_2021_streamlit.parquet
+
+├── EDA.ipynb
+
+├── render.txt
+
+├── requirements.txt
+
+├── .env.example
+
+├── .gitignore
+
+├── .gitpod.yml
+
+├── README.es.md
+
+└── README.md
+
+## 🤖 Modelo de Predicción
+
+Modelo Base: XGBoost Clasificación Binaria
+
+Accuracy: 83.80%
+
+Ajuste de hiperparámetros: RandomizedSearchCV
+
+Se optimizó para reducir falsos negativos (FN)
+
+Modelo Final: XGBoost + RandomSearchCV
+
+Accuracy: 84.52%
+
+Reducción de FN y optimización de recall
+
+## 🚨 Limitaciones del Modelo
+
+📂 Almacenamiento: Se requiere optimización de recursos para manejar el volumen de datos.
+
+🌐 Implementación en producción: Integración con plataformas en tiempo real.
+
+💻 Diseño del modelo: Posibles mejoras con redes neuronales o modelos secuenciales.
+
+## 🛠️ Configuración e Instalación
+
+🔗 Prerrequisitos
+
+Asegúrate de tener instalado:
+
+Python 3.8+
+
+pip (gestor de paquetes de Python)
+
+🔗 Instalación
+
+1. Clona este repositorio:
+
+git clone https://github.com/tuusuario/Flight-Status-Prediction.git
+cd Flight-Status-Prediction
+
+2. Instala las dependencias:
+
 pip install -r requirements.txt
-```
 
-**Crear una base de datos (si es necesario)**
+## ⚡ Ejecutando la Aplicación
 
-Crea una nueva base de datos dentro del motor Postgres personalizando y ejecutando el siguiente comando: `$ createdb -h localhost -U <username> <db_name>`
-Conéctate al motor Postgres para usar tu base de datos, manipular tablas y datos: `$ psql -h localhost -U <username> <db_name>`
-NOTA: Recuerda revisar la información del archivo ./.env para obtener el nombre de usuario y db_name.
+Ejecuta el script principal:
 
-¡Una vez que estés dentro de PSQL podrás crear tablas, hacer consultas, insertar, actualizar o eliminar datos y mucho más!
-
-**Variables de entorno**
-
-Crea un archivo .env en el directorio raíz del proyecto para almacenar tus variables de entorno, como tu cadena de conexión a la base de datos:
-
-```makefile
-DATABASE_URL="your_database_connection_url_here"
-```
-
-## Ejecutando la Aplicación
-
-Para ejecutar la aplicación, ejecuta el script app.py desde la raíz del directorio del proyecto:
-
-```bash
 python app.py
-```
 
-## Añadiendo Modelos
+Si deseas re-entrenar el modelo:
 
-Para añadir clases de modelos SQLAlchemy, crea nuevos archivos de script de Python dentro del directorio models/. Estas clases deben ser definidas de acuerdo a tu esquema de base de datos.
+python app.py --train
 
-Definición del modelo de ejemplo (`models/example_model.py`):
+## 🎉 Conclusión
 
-```py
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+Este sistema proporciona una herramienta predictiva útil para aerolíneas y pasajeros, optimizando la toma de decisiones y reduciendo el impacto de los retrasos en los vuelos.
 
-Base = declarative_base()
+🚀 ¡Gracias por visitar nuestro proyecto!
 
-class ExampleModel(Base):
-    __tablename__ = 'example_table'
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-
-```
-
-## Trabajando con Datos
-
-Puedes colocar tus conjuntos de datos brutos en el directorio data/raw, conjuntos de datos intermedios en data/interim, y los conjuntos de datos procesados listos para el análisis en data/processed.
-
-Para procesar datos, puedes modificar el script app.py para incluir tus pasos de procesamiento de datos, utilizando pandas para la manipulación y análisis de datos.
-
-## Contribuyentes
-
-Esta plantilla fue construida como parte del [Data Science and Machine Learning Bootcamp](https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning) de 4Geeks Academy por [Alejandro Sanchez](https://twitter.com/alesanchezr) y muchos otros contribuyentes. Descubre más sobre [los programas BootCamp de 4Geeks Academy](https://4geeksacademy.com/us/programs) aquí.
-
-Otras plantillas y recursos como este se pueden encontrar en la página de GitHub de la escuela.
