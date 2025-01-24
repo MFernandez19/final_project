@@ -14,6 +14,8 @@ def load_model():
         model = pickle.load(file)
     return model
 
+df_datos = pd.read_csv("../data/processed/X_test_with_outliers_norm.csv")
+
 model = load_model()
 
 # Columnas utilizadas en el modelo
@@ -38,21 +40,23 @@ def preprocess_data(input_data, _encoders, _scaler):  # Renombrar parámetros pa
 
 # Entradas del usuario
 st.sidebar.header("Introducir características del vuelo")
-airlines = ["Delta", "United", "American Airlines", "Southwest", "JetBlue"]
-states = ["California", "Texas", "Florida", "New York", "Illinois"]
-cities = ["Los Angeles", "New York", "Chicago", "Houston", "Miami"]
-airports = ["LAX", "JFK", "ORD", "IAH", "MIA"]
-days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+airlines_data = df_datos["Airline"]
+origin_state_data = df_datos["OriginStateName"]
+dest_state_data = df_datos["DestStateName"]
+origin_city_data = df_datos["OriginCityName"]
+dest_city_data = df_datos["DestCityName"]
+airports_data = ["LAX", "JFK", "ORD", "IAH", "MIA"]
+days_of_week_data = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-airline = st.sidebar.selectbox("Aerolínea", airlines)
-origin = st.sidebar.selectbox("Código de aeropuerto de origen", airports)
-dest = st.sidebar.selectbox("Código de aeropuerto de destino", airports)
+airline = st.sidebar.selectbox("Aerolínea", airlines_data)
+origin = st.sidebar.text_input("Código de aeropuerto de origen", "JFK")
+dest = st.sidebar.text_input("Código de aeropuerto de destino", "JFK")
 origin_city = st.sidebar.selectbox("Ciudad de origen", cities)
 dest_city = st.sidebar.selectbox("Ciudad de destino", cities)
-origin_state = st.sidebar.selectbox("Estado de origen", states)
-dest_state = st.sidebar.selectbox("Estado de destino", states)
+origin_state = st.sidebar.selectbox("Estado de origen", origin_state_data)
+dest_state = st.sidebar.selectbox("Estado de destino", dest_state_data)
 
-day_of_week = st.sidebar.selectbox("Weekday", days_of_week)
+day_of_week = st.sidebar.selectbox("Weekday", days_of_week_data)
 week_type = st.sidebar.selectbox("Tipo de semana", ["Laboral", "Fin de semana"])
 dia_festivo = st.sidebar.selectbox("¿Es día festivo?", ["Sí", "No"])
 
