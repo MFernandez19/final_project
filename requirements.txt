@@ -14,3 +14,6 @@ sqlalchemy>=1.4.37
 sympy>=1.10.1
 xgboost
 pyarrow
+scipy==1.12.0
+imbalanced-learn==0.11.0
+lightgbm==4.2.0
