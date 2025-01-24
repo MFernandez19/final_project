@@ -14,7 +14,12 @@ def load_model():
         model = pickle.load(file)
     return model
 
-df_datos = pd.read_csv("/data/processed/X_test_with_outliers_norm.csv")
+df_datos_airline = pd.read_csv("data/processed/X_test_with_outliers_norm_airline.csv")
+df_datos_DestCityName = pd.read_csv("data/processed/X_test_with_outliers_norm_DestCityName.csv")
+df_datos_DestStateName = pd.read_csv("data/processed/X_test_with_outliers_norm_DestStateName.csv")
+df_datos_OriginCityName = pd.read_csv("data/processed/X_test_with_outliers_norm_OriginCityName.csv")
+df_datos_OriginStateName = pd.read_csv("data/processed/X_test_with_outliers_norm_OriginStateName.csv")
+
 
 model = load_model()
 
@@ -40,11 +45,11 @@ def preprocess_data(input_data, _encoders, _scaler):  # Renombrar parámetros pa
 
 # Entradas del usuario
 st.sidebar.header("Introducir características del vuelo")
-airlines_data = df_datos["Airline"]
-origin_state_data = df_datos["OriginStateName"]
-dest_state_data = df_datos["DestStateName"]
-origin_city_data = df_datos["OriginCityName"]
-dest_city_data = df_datos["DestCityName"]
+airlines_data = df_datos_airline
+origin_state_data = df_datos_OriginStateName
+dest_state_data = df_datos_DestStateName
+origin_city_data = df_datos_OriginCityName
+dest_city_data = df_datos_DestCityName
 airports_data = ["LAX", "JFK", "ORD", "IAH", "MIA"]
 days_of_week_data = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
