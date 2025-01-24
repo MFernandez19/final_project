@@ -99,15 +99,15 @@ st.dataframe(input_data)
 @st.cache_resource
 def load_encoders_and_scaler():
     encoders = {
-        "Airline": LabelEncoder().fit(airlines),
-        "Origin": LabelEncoder().fit(airports),
-        "Dest": LabelEncoder().fit(airports),
-        "OriginCityName": LabelEncoder().fit(cities),
-        "DestCityName": LabelEncoder().fit(cities),
-        "OriginStateName": LabelEncoder().fit(states),
-        "DestStateName": LabelEncoder().fit(states),
+        "Airline": LabelEncoder().fit(airline),
+        "Origin": LabelEncoder().fit(origin),
+        "Dest": LabelEncoder().fit(dest),
+        "OriginCityName": LabelEncoder().fit(origin_city),
+        "DestCityName": LabelEncoder().fit(dest_city),
+        "OriginStateName": LabelEncoder().fit(origin_state),
+        "DestStateName": LabelEncoder().fit(dest_state),
         "WeekType": LabelEncoder().fit(["Laboral", "Fin de semana"]),
-        "DayOfWeek": LabelEncoder().fit(days_of_week)
+        "DayOfWeek": LabelEncoder().fit(day_of_week)
     }
     scaler = StandardScaler().fit(pd.DataFrame({
         "CRSDepTime": [0, 1200, 2359, 1800],
@@ -132,4 +132,3 @@ processed_data = processed_data.reindex(columns=features, fill_value=0)
 if st.button("Predecir retraso"):
     prediction = model.predict(processed_data)[0]
     st.write(f"### Predicción del retraso: {prediction:.2f} minutos")
-    
