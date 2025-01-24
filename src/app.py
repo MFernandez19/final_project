@@ -17,61 +17,46 @@ def load_model():
 
 model = load_model()
 
-# Carga manual
 with open("data/interim/enc_Airline.json", "r") as file:
-    content = json.load(file)
+    content1 = json.load(file)
 
-# Crear el DataFrame
-df_datos_airline = pd.DataFrame(content)
-print(df_datos_airline)
+print(content1)
 
 # Carga manual
 with open("data/interim/enc_DestCityName", "r") as file:
-    content = json.load(file)
+    content2 = json.load(file)
 
-# Crear el DataFrame
-df_datos_DestCityName = pd.DataFrame(content)
-print(df_datos_DestCityName)
+print(content2)
 
 # Carga manual
 with open("data/interim/enc_DestStateName.json", "r") as file:
-    content = json.load(file)
+    content3 = json.load(file)
 
-# Crear el DataFrame
-df_datos_DestStateName = pd.DataFrame(content)
-print(df_datos_DestStateName)
+print(content3)
 
 # Carga manual
 with open("data/interim/enc_OriginCityName.json", "r") as file:
-    content = json.load(file)
+    content4 = json.load(file)
 
-# Crear el DataFrame
-df_datos_OriginCityName = pd.DataFrame(content)
-print(df_datos_OriginCityName)
+print(content4)
 
 # Carga manual
 with open("data/interim/enc_OriginStateName.json", "r") as file:
-    content = json.load(file)
+    content5 = json.load(file)
 
-# Crear el DataFrame
-df_datos_OriginStateName = pd.DataFrame(content)
-print(df_datos_OriginStateName)
+print(content5)
 
 # Carga manual
 with open("data/interim/enc_Origin.json", "r") as file:
-    content = json.load(file)
+    content6 = json.load(file)
 
-# Crear el DataFrame
-df_datos_Origin = pd.DataFrame(content)
-print(df_datos_Origin)
+print(content6)
 
 # Carga manual
 with open("data/interim/enc_Dest.json", "r") as file:
-    content = json.load(file)
+    content7 = json.load(file)
 
-# Crear el DataFrame
-df_datos_Dest = pd.DataFrame(content)
-print(df_datos_Dest)
+print(content7)
 
 # Columnas utilizadas en el modelo
 features = [
