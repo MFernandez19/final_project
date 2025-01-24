@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import pickle
 from sklearn.preprocessing import LabelEncoder, StandardScaler
+import json
 
 # Título de la aplicación
 st.title("Predicción de Retrasos en Vuelos")
