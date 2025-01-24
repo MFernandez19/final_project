@@ -119,7 +119,7 @@ try:
         "Quarter": input_data["Quarter"] if isinstance(input_data["Quarter"], (int, float)) else input_data["Quarter"].iloc[0],
         "Month": input_data["Month"] if isinstance(input_data["Month"], (int, float)) else input_data["Month"].iloc[0],
         "DayofMonth": input_data["DayofMonth"] if isinstance(input_data["DayofMonth"], (int, float)) else input_data["DayofMonth"].iloc[0],
-        "DayOfWeek": input_data["DayOfWeek"] if isinstance(input_data["DayOfWeek"], (int, float)) else input_data["DayOfWeek"].iloc[0],
+        "WeekType": input_data["WeekType"] if isinstance(input_data["WeekType"], (int, float)) else input_data["WeekType"].iloc[0],
     }
 
     # Crea un DataFrame con los datos transformados
