@@ -119,6 +119,8 @@ transformed_input = {
     "DayOfWeek": user_input["DayOfWeek"], 
 }
 
+df_transformed = pd.DataFrame([transformed_input])
+
 # Predicción
 if st.button("Predecir retraso"):
     prediction = modelo.predict(df_transformed)  # Asegúrate de que df_transformed esté definido correctamente
