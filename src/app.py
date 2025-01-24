@@ -56,8 +56,8 @@ days_of_week_data = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sa
 airline = st.sidebar.selectbox("Aerolínea", airlines_data)
 origin = st.sidebar.text_input("Código de aeropuerto de origen", "JFK")
 dest = st.sidebar.text_input("Código de aeropuerto de destino", "JFK")
-origin_city = st.sidebar.selectbox("Ciudad de origen", cities)
-dest_city = st.sidebar.selectbox("Ciudad de destino", cities)
+origin_city = st.sidebar.selectbox("Ciudad de origen", origin_city_data)
+dest_city = st.sidebar.selectbox("Ciudad de destino", dest_city_data)
 origin_state = st.sidebar.selectbox("Estado de origen", origin_state_data)
 dest_state = st.sidebar.selectbox("Estado de destino", dest_state_data)
 
