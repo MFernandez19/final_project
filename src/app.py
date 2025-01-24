@@ -5,17 +5,18 @@ import pickle
 import json
 
 # Ruta al archivo del DataFrame y al modelo
-FILE_PATH = "data/raw/Combined_Flights_2021.parquet"
-MODEL_PATH = "models/best_model_xgb_subsample_1.0_n_estimators_200_max_depth_10_learning_rate_0.2_gamma_0.1_colsample_bytree_0.8.pkl"
+FILE_PATH = "Combined_Flights_2021_streamlit.parquet"
+MODEL_PATH = "best_model_xgb_subsample_1.0_n_estimators_200_max_depth_10_learning_rate_0.2_gamma_0.1_colsample_bytree_0.8.pkl"
+
+required_columns = [
+    "Airline", "Origin", "Dest", "OriginCityName", "DestCityName",
+    "OriginStateName", "DestStateName"
+]
 
 # Cargar el DataFrame
 @st.cache_resource
 def load_and_prepare_data(file_path):
     df = pd.read_parquet(file_path)
-    required_columns = [
-        "Airline", "Origin", "Dest", "OriginCityName", "DestCityName",
-        "OriginStateName", "DestStateName"
-    ]
     df = df[required_columns].drop_duplicates().dropna()
     return df
 
@@ -29,7 +30,7 @@ def load_encoders():
         "enc_OriginStateName", "enc_DestStateName"
     ]
     for file in files:
-        with open(f"data/interim/{file}.json", "r") as f:
+        with open(f"../data/interim/{file}.json", "r") as f:
             encoders[file.split("_")[1]] = json.load(f)
     return encoders
 
