@@ -132,3 +132,4 @@ processed_data = processed_data.reindex(columns=features, fill_value=0)
 if st.button("Predecir retraso"):
     prediction = model.predict(processed_data)[0]
     st.write(f"### Predicción del retraso: {prediction:.2f} minutos")
+    
