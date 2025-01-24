@@ -116,38 +116,38 @@ st.dataframe(input_data)
 
 # Preprocesar los datos antes de la predicción
 try:
-    transformed_input = input_data.copy()
+    # Transforma las clases del usuario asegurando que los valores son escalares
+    transformed_input = {
+        "Airline": airline_classes.get(user_input["Airline"], ""),
+        "Origin": origin_classes.get(user_input["Origin"], ""),
+        "Dest": dest_classes.get(user_input["Dest"], ""),
+        "OriginCityName": origin_city_classes.get(user_input["OriginCityName"], ""),
+        "DestCityName": dest_city_classes.get(user_input["DestCityName"], ""),
+        "OriginStateName": origin_state_classes.get(user_input["OriginStateName"], ""),
+        "DestStateName": dest_state_classes.get(user_input["DestStateName"], ""),
+        "CRSDepTime": user_input["CRSDepTime"] if isinstance(user_input["CRSDepTime"], (int, float)) else user_input["CRSDepTime"].iloc[0],
+        "CRSArrTime": user_input["CRSArrTime"] if isinstance(user_input["CRSArrTime"], (int, float)) else user_input["CRSArrTime"].iloc[0],
+        "Distance": user_input["Distance"] if isinstance(user_input["Distance"], (int, float)) else user_input["Distance"].iloc[0],
+        "Quarter": user_input["Quarter"] if isinstance(user_input["Quarter"], (int, float)) else user_input["Quarter"].iloc[0],
+        "Month": user_input["Month"] if isinstance(user_input["Month"], (int, float)) else user_input["Month"].iloc[0],
+        "DayofMonth": user_input["DayofMonth"] if isinstance(user_input["DayofMonth"], (int, float)) else user_input["DayofMonth"].iloc[0],
+        "DayOfWeek": user_input["DayOfWeek"] if isinstance(user_input["DayOfWeek"], (int, float)) else user_input["DayOfWeek"].iloc[0],
+    }
 
-    # Transformar las clases de texto a números
-    transformed_input["Airline"] = encoders["Airline"].transform([airline])[0]
-    transformed_input["Origin"] = encoders["Origin"].transform([origin])[0]
-    transformed_input["Dest"] = encoders["Dest"].transform([dest])[0]
-    transformed_input["OriginCityName"] = encoders["OriginCityName"].transform([origin_city])[0]
-    transformed_input["DestCityName"] = encoders["DestCityName"].transform([dest_city])[0]
-    transformed_input["OriginStateName"] = encoders["OriginStateName"].transform([origin_state])[0]
-    transformed_input["DestStateName"] = encoders["DestStateName"].transform([dest_state])[0]
-    transformed_input["WeekType"] = encoders["WeekType"].transform([week_type])[0]
-    
-    # Asegurarse de que los números están bien pasados (puede que tu modelo no maneje mal valores no numéricos)
-    transformed_input["CRSDepTime"] = int(crs_dep_time)
-    transformed_input["CRSArrTime"] = int(crs_arr_time)
-    transformed_input["Distance"] = int(distance)
-    transformed_input["Quarter"] = int(quarter)
-    transformed_input["Month"] = int(month)
-    transformed_input["DayofMonth"] = int(day_of_month)
+    # Crea un DataFrame para la predicción
+    df_transformed = pd.DataFrame([transformed_input])
+    st.write("Datos transformados listos para predecir:")
+    st.write(df_transformed)
 
-    # Escalar las características numéricas
-    df_transformed = preprocess_data(transformed_input, encoders, scaler)
-    
 except Exception as e:
     st.error(f"Hubo un error al transformar los datos: {e}")
 
+
 # Predicción
-try:
-    prediction = model.predict(df_transformed)
-    if prediction[0] == 0:
-        st.success("Afortunadamente su vuelo no se ha retrasado.")
-    else:
-        st.error("Desafortunadamente su vuelo ha sido retrasado. Por favor, tome las precauciones necesarias.")
+if st.button("Predecir retraso"):
+    prediction = model.predict(df_transformed)  # Asegúrate de que df_transformed esté definido correctamente
+
+    if prediction == 0:
+        st.write("✅ Afortunadamente, su vuelo no se ha retrasado.")
 except Exception as e:
-    st.error(f"Hubo un error al realizar la predicción: {e}")
+    st.error(f"Hubo un error al transformar los datos: {e}")
