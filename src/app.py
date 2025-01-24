@@ -10,7 +10,7 @@ st.title("Predicción de Retrasos en Vuelos")
 # Cargar el modelo preentrenado
 @st.cache_resource
 def load_model():
-    with open("../models/best_model_xgb_subsample_1.0_n_estimators_200_max_depth_10_learning_rate_0.2_gamma_0.1_colsample_bytree_0.8.pkl", "rb") as file:
+    with open("models/best_model_xgb_subsample_1.0_n_estimators_200_max_depth_10_learning_rate_0.2_gamma_0.1_colsample_bytree_0.8.pkl", "rb") as file:
         model = pickle.load(file)
     return model
 
@@ -113,7 +113,28 @@ def load_encoders_and_scaler():
 encoders, scaler = load_encoders_and_scaler()
 
 # Preprocesar los datos
-processed_data = preprocess_data(input_data, _encoders, scaler)
+
+@st.cache_data
+def preprocess_data(input_data, _encoders, _scaler):
+    """
+    Preprocesa los datos de entrada:
+    - Aplica codificación a columnas categóricas con los encoders.
+    - Escala las columnas numéricas con el scaler.
+    """
+    input_data = input_data.copy()
+    
+    # Codificar columnas categóricas
+    for col in _encoders.keys():
+        input_data[col] = _encoders[col].transform(input_data[col])
+    
+    # Escalar columnas numéricas
+    numeric_cols = ["CRSDepTime", "CRSArrTime", "Distance", "Quarter", "Month",
+                    "DayofMonth", "DayOfWeek", "WeekType", "dia_festivo"]
+    input_data[numeric_cols] = _scaler.transform(input_data[numeric_cols])
+    
+    return input_data
+
+processed_data = preprocess_data(input_data, encoders, scaler)
 
 # Predicción
 if st.button("Predecir retraso"):
