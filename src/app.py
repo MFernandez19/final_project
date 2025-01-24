@@ -16,13 +16,61 @@ def load_model():
 
 model = load_model()
 
-df_datos_airline = pd.read_json("data/interim/enc_Airline.json")
-df_datos_DestCityName = pd.read_json("data/interim/enc_DestCityName.json")
-df_datos_DestStateName = pd.read_json("data/interim/enc_DestStateName.json")
-df_datos_OriginCityName = pd.read_json("data/interim/enc_OriginCityName.json")
-df_datos_OriginStateName = pd.read_json("data/interim/enc_OriginStateName.json")
-df_datos_Origin = pd.read_json("data/interim/enc_Origin.json")
-df_datos_Dest = pd.read_json("data/interim/enc_Dest.json")
+# Carga manual
+with open("data/interim/enc_Airline.json", "r") as file:
+    content = json.load(file)
+
+# Crear el DataFrame
+df_datos_airline = pd.DataFrame(content)
+print(df_datos_airline)
+
+# Carga manual
+with open("data/interim/enc_DestCityName", "r") as file:
+    content = json.load(file)
+
+# Crear el DataFrame
+df_datos_DestCityName = pd.DataFrame(content)
+print(df_datos_DestCityName)
+
+# Carga manual
+with open("data/interim/enc_DestStateName.json", "r") as file:
+    content = json.load(file)
+
+# Crear el DataFrame
+df_datos_DestStateName = pd.DataFrame(content)
+print(df_datos_DestStateName)
+
+# Carga manual
+with open("data/interim/enc_OriginCityName.json", "r") as file:
+    content = json.load(file)
+
+# Crear el DataFrame
+df_datos_OriginCityName = pd.DataFrame(content)
+print(df_datos_OriginCityName)
+
+# Carga manual
+with open("data/interim/enc_OriginStateName.json", "r") as file:
+    content = json.load(file)
+
+# Crear el DataFrame
+df_datos_OriginStateName = pd.DataFrame(content)
+print(df_datos_OriginStateName)
+
+# Carga manual
+with open("data/interim/enc_Origin.json", "r") as file:
+    content = json.load(file)
+
+# Crear el DataFrame
+df_datos_Origin = pd.DataFrame(content)
+print(df_datos_Origin)
+
+# Carga manual
+with open("data/interim/enc_Dest.json", "r") as file:
+    content = json.load(file)
+
+# Crear el DataFrame
+df_datos_Dest = pd.DataFrame(content)
+print(df_datos_Dest)
 
 # Columnas utilizadas en el modelo
 features = [
