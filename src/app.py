@@ -17,6 +17,7 @@ def load_model():
 
 model = load_model()
 
+# Cargar las clases de codificación (LabelEncoder)
 with open('data/interim/enc_Airline.json', 'r') as f:
     airline_classes = json.load(f)
 
@@ -45,12 +46,11 @@ features = [
 ]
 
 # Función para preprocesar los datos
-@st.cache_data
-def preprocess_data(input_data, _encoders, _scaler):  # Renombrar parámetros para evitar problemas de hashing
+@st.cache_resource
+def preprocess_data(input_data, _encoders, _scaler):
     # Codificar características categóricas
-    for col in _encoders:
-        if col in input_data:
-            input_data[col] = _encoders[col].transform(input_data[col])
+    for col, encoder in _encoders.items():
+        input_data[col] = encoder.transform(input_data[col])
     
     # Escalar características numéricas
     numeric_cols = ["CRSDepTime", "CRSArrTime", "Distance", "Quarter", "Month", "DayofMonth", "DayOfWeek"]
@@ -100,41 +100,38 @@ st.write("### Datos de entrada")
 st.dataframe(input_data)
 
 # Preprocesar los datos antes de la predicción
-
 try:
-    # Transforma las clases del usuario asegurando que los valores sean escalares
-    transformed_input = {
-        "Airline": airline_classes.get(input_data["Airline"], ""),
-        "Origin": origin_classes.get(input_data["Origin"], ""),
-        "Dest": dest_classes.get(input_data["Dest"], ""),
-        "OriginCityName": origin_city_classes.get(input_data["OriginCityName"], ""),
-        "DestCityName": dest_city_classes.get(input_data["DestCityName"], ""),
-        "OriginStateName": origin_state_classes.get(input_data["OriginStateName"], ""),
-        "DestStateName": dest_state_classes.get(input_data["DestStateName"], ""),
-        "CRSDepTime": input_data["CRSDepTime"] if isinstance(input_data["CRSDepTime"], (int, float)) else input_data["CRSDepTime"].iloc[0],
-        "CRSArrTime": input_data["CRSArrTime"] if isinstance(input_data["CRSArrTime"], (int, float)) else input_data["CRSArrTime"].iloc[0],
-        "Distance": input_data["Distance"] if isinstance(input_data["Distance"], (int, float)) else input_data["Distance"].iloc[0],
-        "Quarter": input_data["Quarter"] if isinstance(input_data["Quarter"], (int, float)) else input_data["Quarter"].iloc[0],
-        "Month": input_data["Month"] if isinstance(input_data["Month"], (int, float)) else input_data["Month"].iloc[0],
-        "DayofMonth": input_data["DayofMonth"] if isinstance(input_data["DayofMonth"], (int, float)) else input_data["DayofMonth"].iloc[0],
-        "WeekType": input_data["WeekType"] if isinstance(input_data["WeekType"], (int, float)) else input_data["WeekType"].iloc[0],
-    }
-
-    # Crea un DataFrame con los datos transformados
-    df_transformed = pd.DataFrame([transformed_input])
-
+    transformed_input = input_data.copy()
+    
+    # Transformar las clases de texto a números
+    transformed_input["Airline"] = airline_classes[airline]
+    transformed_input["Origin"] = origin_classes.get(origin, "")
+    transformed_input["Dest"] = dest_classes.get(dest, "")
+    transformed_input["OriginCityName"] = origin_city_classes.get(origin_city, "")
+    transformed_input["DestCityName"] = dest_city_classes.get(dest_city, "")
+    transformed_input["OriginStateName"] = origin_state_classes.get(origin_state, "")
+    transformed_input["DestStateName"] = dest_state_classes.get(dest_state, "")
+    
+    # Asegurarse de que los números están bien pasados (puede que tu modelo no maneje mal valores no numéricos)
+    transformed_input["CRSDepTime"] = int(crs_dep_time)
+    transformed_input["CRSArrTime"] = int(crs_arr_time)
+    transformed_input["Distance"] = int(distance)
+    transformed_input["Quarter"] = int(quarter)
+    transformed_input["Month"] = int(month)
+    transformed_input["DayofMonth"] = int(day_of_month)
+    
+    # Aquí va el preprocesamiento final con los encoders y el escalado
+    df_transformed = preprocess_data(transformed_input, encoders, scaler)
+    
 except Exception as e:
     st.error(f"Hubo un error al transformar los datos: {e}")
 
+# Predicción
 try:
-    # Realiza la predicción si df_transformed es válido
     prediction = model.predict(df_transformed)
-    
     if prediction[0] == 0:
         st.success("Afortunadamente su vuelo no se ha retrasado.")
     else:
         st.error("Desafortunadamente su vuelo ha sido retrasado. Por favor, tome las precauciones necesarias.")
 except Exception as e:
     st.error(f"Hubo un error al realizar la predicción: {e}")
-
-
