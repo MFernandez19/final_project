@@ -145,9 +145,9 @@ except Exception as e:
 
 # Predicción
 if st.button("Predecir retraso"):
-    prediction = model.predict(df_transformed)  # Asegúrate de que df_transformed esté definido correctamente
+    prediction = modelo.predict(df_transformed)  # Asegúrate de que df_transformed esté definido correctamente
 
     if prediction == 0:
         st.write("✅ Afortunadamente, su vuelo no se ha retrasado.")
-except Exception as e:
-    st.error(f"Hubo un error al transformar los datos: {e}")
+    else:
+        st.write("⚠️ Desafortunadamente, su vuelo ha sido retrasado. Por favor, tome las medidas necesarias.")
