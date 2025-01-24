@@ -138,6 +138,7 @@ try:
 
     # Escalar las características numéricas
     df_transformed = preprocess_data(transformed_input, encoders, scaler)
+    print(df_transformed)
     
 except Exception as e:
     st.error(f"Hubo un error al transformar los datos: {e}")
