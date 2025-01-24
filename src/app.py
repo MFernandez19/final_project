@@ -102,21 +102,22 @@ st.dataframe(input_data)
 # Preprocesar los datos antes de la predicción
 
 try:
+    # Transforma las clases del usuario asegurando que los valores son escalares
     transformed_input = {
-        "Airline": airline_classes.get(input_data.get("Airline", "")), 
-        "Origin": origin_classes.get(input_data.get("Origin", "")), 
-        "Dest": dest_classes.get(input_data.get("Dest", "")), 
-        "OriginCityName": origin_city_classes.get(input_data.get("OriginCityName", "")), 
-        "DestCityName": dest_city_classes.get(input_data.get("DestCityName", "")), 
-        "OriginStateName": origin_state_classes.get(input_data.get("OriginStateName", "")), 
-        "DestStateName": dest_state_classes.get(input_data.get("DestStateName", "")), 
-        "CRSDepTime": input_data.get("CRSDepTime", 0), 
-        "CRSArrTime": input_data.get("CRSArrTime", 0), 
-        "Distance": input_data.get("Distance", 0), 
-        "Quarter": input_data.get("Quarter", 0), 
-        "Month": input_data.get("Month", 0), 
-        "DayofMonth": input_data.get("DayofMonth", 0), 
-        "DayOfWeek": input_data.get("DayOfWeek", 0),
+        "Airline": airline_classes.get(user_input["Airline"], ""),
+        "Origin": origin_classes.get(user_input["Origin"], ""),
+        "Dest": dest_classes.get(user_input["Dest"], ""),
+        "OriginCityName": origin_city_classes.get(user_input["OriginCityName"], ""),
+        "DestCityName": dest_city_classes.get(user_input["DestCityName"], ""),
+        "OriginStateName": origin_state_classes.get(user_input["OriginStateName"], ""),
+        "DestStateName": dest_state_classes.get(user_input["DestStateName"], ""),
+        "CRSDepTime": user_input["CRSDepTime"] if isinstance(user_input["CRSDepTime"], (int, float)) else user_input["CRSDepTime"].iloc[0],
+        "CRSArrTime": user_input["CRSArrTime"] if isinstance(user_input["CRSArrTime"], (int, float)) else user_input["CRSArrTime"].iloc[0],
+        "Distance": user_input["Distance"] if isinstance(user_input["Distance"], (int, float)) else user_input["Distance"].iloc[0],
+        "Quarter": user_input["Quarter"] if isinstance(user_input["Quarter"], (int, float)) else user_input["Quarter"].iloc[0],
+        "Month": user_input["Month"] if isinstance(user_input["Month"], (int, float)) else user_input["Month"].iloc[0],
+        "DayofMonth": user_input["DayofMonth"] if isinstance(user_input["DayofMonth"], (int, float)) else user_input["DayofMonth"].iloc[0],
+        "DayOfWeek": user_input["DayOfWeek"] if isinstance(user_input["DayOfWeek"], (int, float)) else user_input["DayOfWeek"].iloc[0],
     }
 
     # Crea un DataFrame para la predicción
@@ -127,9 +128,10 @@ try:
 except Exception as e:
     st.error(f"Hubo un error al transformar los datos: {e}")
 
+
 # Predicción
 if st.button("Predecir retraso"):
-    prediction = modelo.predict(df_transformed)  # Asegúrate de que df_transformed esté definido correctamente
+    prediction = model.predict(df_transformed)  # Asegúrate de que df_transformed esté definido correctamente
 
     if prediction == 0:
         st.write("✅ Afortunadamente, su vuelo no se ha retrasado.")
