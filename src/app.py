@@ -100,7 +100,7 @@ st.write("### Datos de entrada")
 st.dataframe(input_data)
 
 # Preprocesar los datos antes de la predicción
-@st.cache_resource
+
 try:
     transformed_input = {
         "Airline": airline_classes.get(user_input.get("Airline", "")), 
