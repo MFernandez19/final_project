@@ -39,6 +39,21 @@ with open('data/interim/enc_OriginCityName.json', 'r') as f:
 with open('data/interim/enc_OriginStateName.json', 'r') as f:
     origin_state_classes = json.load(f)
 
+# Crear los codificadores (LabelEncoders) para cada columna
+encoders = {
+    "Airline": LabelEncoder().fit(list(airline_classes.values())),
+    "Origin": LabelEncoder().fit(list(origin_classes.values())),
+    "Dest": LabelEncoder().fit(list(dest_classes.values())),
+    "OriginCityName": LabelEncoder().fit(list(origin_city_classes.values())),
+    "DestCityName": LabelEncoder().fit(list(dest_city_classes.values())),
+    "OriginStateName": LabelEncoder().fit(list(origin_state_classes.values())),
+    "DestStateName": LabelEncoder().fit(list(dest_state_classes.values())),
+    "WeekType": LabelEncoder().fit(["Laboral", "Fin de semana"])
+}
+
+# Usar un scaler para las columnas numéricas
+scaler = StandardScaler()
+
 # Columnas utilizadas en el modelo
 features = [
     "Airline", "Origin", "Dest", "OriginCityName", "DestCityName", "OriginStateName", "DestStateName", "CRSDepTime", "CRSArrTime",
@@ -47,14 +62,14 @@ features = [
 
 # Función para preprocesar los datos
 @st.cache_resource
-def preprocess_data(input_data, _encoders, _scaler):
+def preprocess_data(input_data, encoders, scaler):
     # Codificar características categóricas
-    for col, encoder in _encoders.items():
+    for col, encoder in encoders.items():
         input_data[col] = encoder.transform(input_data[col])
     
     # Escalar características numéricas
     numeric_cols = ["CRSDepTime", "CRSArrTime", "Distance", "Quarter", "Month", "DayofMonth", "DayOfWeek"]
-    input_data[numeric_cols] = _scaler.transform(input_data[numeric_cols])
+    input_data[numeric_cols] = scaler.transform(input_data[numeric_cols])
     
     return input_data
 
@@ -102,15 +117,16 @@ st.dataframe(input_data)
 # Preprocesar los datos antes de la predicción
 try:
     transformed_input = input_data.copy()
-    
+
     # Transformar las clases de texto a números
-    transformed_input["Airline"] = airline_classes[airline]
-    transformed_input["Origin"] = origin_classes.get(origin, "")
-    transformed_input["Dest"] = dest_classes.get(dest, "")
-    transformed_input["OriginCityName"] = origin_city_classes.get(origin_city, "")
-    transformed_input["DestCityName"] = dest_city_classes.get(dest_city, "")
-    transformed_input["OriginStateName"] = origin_state_classes.get(origin_state, "")
-    transformed_input["DestStateName"] = dest_state_classes.get(dest_state, "")
+    transformed_input["Airline"] = encoders["Airline"].transform([airline])[0]
+    transformed_input["Origin"] = encoders["Origin"].transform([origin])[0]
+    transformed_input["Dest"] = encoders["Dest"].transform([dest])[0]
+    transformed_input["OriginCityName"] = encoders["OriginCityName"].transform([origin_city])[0]
+    transformed_input["DestCityName"] = encoders["DestCityName"].transform([dest_city])[0]
+    transformed_input["OriginStateName"] = encoders["OriginStateName"].transform([origin_state])[0]
+    transformed_input["DestStateName"] = encoders["DestStateName"].transform([dest_state])[0]
+    transformed_input["WeekType"] = encoders["WeekType"].transform([week_type])[0]
     
     # Asegurarse de que los números están bien pasados (puede que tu modelo no maneje mal valores no numéricos)
     transformed_input["CRSDepTime"] = int(crs_dep_time)
@@ -119,8 +135,8 @@ try:
     transformed_input["Quarter"] = int(quarter)
     transformed_input["Month"] = int(month)
     transformed_input["DayofMonth"] = int(day_of_month)
-    
-    # Aquí va el preprocesamiento final con los encoders y el escalado
+
+    # Escalar las características numéricas
     df_transformed = preprocess_data(transformed_input, encoders, scaler)
     
 except Exception as e:
