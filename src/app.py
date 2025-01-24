@@ -86,13 +86,13 @@ cities = ["Los Angeles", "New York", "Chicago", "Houston", "Miami"]
 airports = ["LAX", "JFK", "ORD", "IAH", "MIA"]
 days_of_week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
-airline = st.sidebar.selectbox("Aerolínea", df_datos_airline)
-origin = st.sidebar.text_input("Código de aeropuerto de origen", df_datos_Origin)
-dest = st.sidebar.text_input("Código de aeropuerto de destino", df_datos_Dest)
-origin_city = st.sidebar.selectbox("Ciudad de origen", df_datos_OriginCityName)
-dest_city = st.sidebar.selectbox("Ciudad de destino", df_datos_DestCityName)
-origin_state = st.sidebar.selectbox("Estado de origen", df_datos_OriginStateName)
-dest_state = st.sidebar.selectbox("Estado de destino", df_datos_DestStateName)
+airline = st.sidebar.selectbox("Aerolínea", content1)
+origin = st.sidebar.text_input("Código de aeropuerto de origen", content6)
+dest = st.sidebar.text_input("Código de aeropuerto de destino", content7)
+origin_city = st.sidebar.selectbox("Ciudad de origen", content4)
+dest_city = st.sidebar.selectbox("Ciudad de destino", content2)
+origin_state = st.sidebar.selectbox("Estado de origen", content5)
+dest_state = st.sidebar.selectbox("Estado de destino", content3)
 
 day_of_week = st.sidebar.selectbox("Weekday", days_of_week)
 week_type = st.sidebar.selectbox("Tipo de semana", ["Laboral", "Fin de semana"])
