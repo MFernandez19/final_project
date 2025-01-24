@@ -98,27 +98,46 @@ st.dataframe(input_data)
 # Preprocesar los datos antes de la predicción
 @st.cache_resource
 def load_encoders_and_scaler():
+    """
+    Carga y ajusta los LabelEncoders y el StandardScaler para las columnas categóricas y numéricas.
+    """
+    data = pd.DataFrame({
+        "Airline": [airline],
+        "Origin": [origin],
+        "Dest": [dest],
+        "OriginCityName": [origin_city],
+        "DestCityName": [dest_city],
+        "OriginStateName": [origin_state],
+        "DestStateName": [dest_state],
+        "CRSDepTime": [600, 1230, 945, 1500, 1730],
+        "CRSArrTime": [900, 1530, 1245, 1800, 2030],
+        "Distance": [760, 2333, 740, 1381, 1712],
+        "Quarter": [1, 1, 1, 1, 1],
+        "Month": [1, 2, 3, 4, 5],
+        "DayofMonth": [10, 15, 20, 25, 30],
+        "DayOfWeek": [1, 2, 3, 4, 5],
+        "WeekType": [1, 1, 2, 2, 3],
+        "dia_festivo": [0, 0, 1, 0, 1]
+    })
+
+    # Extraer las columnas categóricas
     encoders = {
-        "Airline": LabelEncoder().fit(airline),
-        "Origin": LabelEncoder().fit(origin),
-        "Dest": LabelEncoder().fit(dest),
-        "OriginCityName": LabelEncoder().fit(origin_city),
-        "DestCityName": LabelEncoder().fit(dest_city),
-        "OriginStateName": LabelEncoder().fit(origin_state),
-        "DestStateName": LabelEncoder().fit(dest_state),
-        "WeekType": LabelEncoder().fit(["Laboral", "Fin de semana"]),
-        "DayOfWeek": LabelEncoder().fit(day_of_week)
+        "Airline": LabelEncoder().fit(data["Airline"]),
+        "Origin": LabelEncoder().fit(data["Origin"]),
+        "Dest": LabelEncoder().fit(data["Dest"]),
+        "OriginCityName": LabelEncoder().fit(data["OriginCityName"]),
+        "DestCityName": LabelEncoder().fit(data["DestCityName"]),
+        "OriginStateName": LabelEncoder().fit(data["OriginStateName"]),
+        "DestStateName": LabelEncoder().fit(data["DestStateName"])
     }
-    scaler = StandardScaler().fit(pd.DataFrame({
-        "CRSDepTime": [0, 1200, 2359, 1800],
-        "CRSArrTime": [0, 1200, 2359, 1800],
-        "Distance": [100, 2500, 5000, 1500],
-        "Quarter": [1, 2, 3, 4],
-        "Month": [1, 6, 12, 3],
-        "DayofMonth": [1, 15, 31, 10],
-        "DayOfWeek": [0, 1, 2, 3]
-    }))  # Asegurar que todas las listas tengan la misma longitud
+
+    # Escalar las columnas numéricas
+    numeric_cols = ["CRSDepTime", "CRSArrTime", "Distance", "Quarter", "Month",
+                    "DayofMonth", "DayOfWeek", "WeekType", "dia_festivo"]
+    scaler = StandardScaler().fit(data[numeric_cols])
+
     return encoders, scaler
+
 
 encoders, scaler = load_encoders_and_scaler()
 
