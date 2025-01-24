@@ -23,7 +23,7 @@ with open("data/interim/enc_Airline.json", "r") as file:
 print(content1)
 
 # Carga manual
-with open("data/interim/enc_DestCityName", "r") as file:
+with open("data/interim/enc_DestCityName.json", "r") as file:
     content2 = json.load(file)
 
 print(content2)
