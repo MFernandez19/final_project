@@ -101,25 +101,31 @@ st.dataframe(input_data)
 
 # Preprocesar los datos antes de la predicción
 @st.cache_resource
+try:
+    transformed_input = {
+        "Airline": airline_classes.get(user_input.get("Airline", "")), 
+        "Origin": origin_classes.get(user_input.get("Origin", "")), 
+        "Dest": dest_classes.get(user_input.get("Dest", "")), 
+        "OriginCityName": origin_city_classes.get(user_input.get("OriginCityName", "")), 
+        "DestCityName": dest_city_classes.get(user_input.get("DestCityName", "")), 
+        "OriginStateName": origin_state_classes.get(user_input.get("OriginStateName", "")), 
+        "DestStateName": dest_state_classes.get(user_input.get("DestStateName", "")), 
+        "CRSDepTime": user_input.get("CRSDepTime", 0), 
+        "CRSArrTime": user_input.get("CRSArrTime", 0), 
+        "Distance": user_input.get("Distance", 0), 
+        "Quarter": user_input.get("Quarter", 0), 
+        "Month": user_input.get("Month", 0), 
+        "DayofMonth": user_input.get("DayofMonth", 0), 
+        "DayOfWeek": user_input.get("DayOfWeek", 0),
+    }
 
-transformed_input = {
-    "Airline": airline_classes.get(user_input["Airline"]), 
-    "Origin": origin_classes.get(user_input["Origin"]), 
-    "Dest": dest_classes.get(user_input["Dest"]), 
-    "OriginCityName": origin_city_classes.get(user_input["OriginCityName"]), 
-    "DestCityName": dest_city_classes.get(user_input["DestCityName"]), 
-    "OriginStateName": origin_state_classes.get(user_input["OriginStateName"]), 
-    "DestStateName": dest_state_classes.get(user_input["DestStateName"]), 
-    "CRSDepTime": user_input["CRSDepTime"], 
-    "CRSArrTime": user_input["CRSArrTime"], 
-    "Distance": user_input["Distance"], 
-    "Quarter": user_input["Quarter"], 
-    "Month": user_input["Month"], 
-    "DayofMonth": user_input["DayofMonth"], 
-    "DayOfWeek": user_input["DayOfWeek"], 
-}
+    # Crea un DataFrame para la predicción
+    df_transformed = pd.DataFrame([transformed_input])
+    st.write("Datos transformados listos para predecir:")
+    st.write(df_transformed)
 
-df_transformed = pd.DataFrame([transformed_input])
+except Exception as e:
+    st.error(f"Hubo un error al transformar los datos: {e}")
 
 # Predicción
 if st.button("Predecir retraso"):
